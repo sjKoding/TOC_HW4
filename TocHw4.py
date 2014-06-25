@@ -1,14 +1,27 @@
 # -*- coding: utf-8 -*-
+
+# Program: TocHw4.py
+# Author: sjKoding 林賢哲
+# ID: F74001098
+# purpose: Theory of Computation Hw4
+
 import sys
 import urllib2
 import json
 import re
 
 def getDataFromURL( url ):
-	request = urllib2.Request(url)
-	response = urllib2.urlopen(request)
+	try:
+		response = urllib2.urlopen(urllib2.Request(url))
+	except (ValueError, urllib2.URLError) as e:
+		print e
+		sys.exit(0)
 	data = response.read()
-	data = json.loads(data)
+	try:
+		data = json.loads(data)
+	except ValueError as e:
+		print e
+		sys.exit(0)
 	return data
 
 # DEBUG
@@ -38,15 +51,11 @@ def findAndAdd(lists, road, date, minPrice, maxPrice):
 	lists.append(tmp)
 	return
 
-#URL = 'http://www.datagarage.io/api/5365dee31bc6e9d9463a0057'
-# case I
-#URL = 'http://www.datagarage.io/api/538447a07122e8a77dfe2d86'
-# case II
-#URL = 'http://www.datagarage.io/api/5384489ae7259bb37d9238d8'
-# case III
-URL = 'http://www.datagarage.io/api/5385b69de7259bb37d925971'
-# case IV
-#URL = 'http://www.datagarage.io/api/5385b858e7259bb37d926912'
+if len(sys.argv)!=2:
+	print "argv Error: python", sys.argv[0], "[URL]"
+	sys.exit(0)
+
+URL = sys.argv[1]
 data = getDataFromURL( URL )
 
 regionHead = unicode('鄉鎮市區', 'utf-8')
@@ -103,5 +112,4 @@ for i in range(len(matchData)):
 
 
 for i in index:
-#print i, matchData[i]['road'], len(matchData[i]['date']), matchData[i]['maxPrice'], matchData[i]['minPrice']
-	print matchData[i]['road'], matchData[i]['maxPrice'], matchData[i]['minPrice']
+	print matchData[i]['road'], "最高交易價:", matchData[i]['maxPrice'], "最低交易價:", matchData[i]['minPrice']
